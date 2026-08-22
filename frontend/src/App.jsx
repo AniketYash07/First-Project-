@@ -26,8 +26,14 @@ const [position, setPosition] = useState(null)
   const handleSubmit = async (event) => {
   event.preventDefault()
 
+  const user = JSON.parse(localStorage.getItem('user'))
+
+if (!user) {
+alert('Please login before submitting a complaint.')
+return
+}
   try {
-    const response = await fetch(
+  const response = await fetch(
       'http://localhost:5000/api/complaints',
       {
         method: 'POST',
@@ -37,6 +43,7 @@ const [position, setPosition] = useState(null)
         },
 
         body: JSON.stringify({
+           userId: user.id,
           ...formData,
           latitude: position ? position[0] : null,
           longitude: position ? position[1] : null

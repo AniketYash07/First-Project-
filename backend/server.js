@@ -1,22 +1,30 @@
-const express = require('express')
+
+const express = require("express");
 const cors = require('cors')
-const mongoose = require('mongoose')
+const connectDB = require("./config/db");
 require('dotenv').config()
+const dns = require("dns");
+const authRoutes = require("./route/authRouter");
 
-const Complaint = require('./models/Complaint')
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-const app = express()
+const Complaint = require('./Complaint')
+
+const app = express();
 
 // Middleware
 app.use(cors())
 app.use(express.json())
 
 
+app.use("/api/auth", authRoutes);
+
+
 // Test route
 app.get('/', (req, res) => {
   res.send('CivicFix Backend is Running!')
 })
-
+connectDB();
 
 // Create complaint
 app.post('/api/complaints', async (req, res) => {
@@ -24,6 +32,7 @@ app.post('/api/complaints', async (req, res) => {
   try {
 
     const {
+      userId,
       title,
       category,
       description,
@@ -43,6 +52,7 @@ app.post('/api/complaints', async (req, res) => {
 
     // Create complaint in MongoDB
     const complaint = new Complaint({
+      userId,
       title,
       category,
       description,
@@ -101,25 +111,72 @@ app.get('/api/complaints', async (req, res) => {
   }
 
 })
-
-
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-
-    console.log('MongoDB connected successfully!')
-
-    const PORT = process.env.PORT || 5000
-
-    app.listen(PORT, () => {
+   const PORT = process.env.PORT || 5000;
+ app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`)
     })
 
-  })
-  .catch((error) => {
+// Get complaints of a specific user
+app.get('/api/complaints/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params
 
-    console.error('MongoDB connection failed!')
-    console.error(error.message)
+    const complaints = await Complaint.find({ userId })
+      .sort({ createdAt: -1 })
 
-  })
+    res.json(complaints)
+
+  } catch (error) {
+    console.error('Error fetching user complaints:', error)
+
+    res.status(500).json({
+      message: 'Failed to fetch user complaints'
+    })
+  }
+})
+// MongoDB connection
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => {
+
+//     console.log('MongoDB connected successfully!')
+
+//     const PORT = process.env.PORT || 5000
+
+//     app.listen(PORT, () => {
+//       console.log(`Server running on http://localhost:${PORT}`)
+//     })
+
+//   })
+//   .catch((error) => {
+
+//     console.error('MongoDB connection failed!')
+//     console.error(error.message)
+
+//   })
+
+//----------------------------------------------------------------
+// const dns = require("dns");
+
+// dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
+// require("dotenv").config();
+
+// const express = require("express");
+// const connectDB = require("./config/db");
+
+// const app = express();
+
+// app.use(express.json());
+
+// connectDB();
+
+// app.get("/", (req, res) => {
+//     res.send("CivicFix API is running");
+// });
+
+// const PORT = process.env.PORT || 5000;
+
+// app.listen(PORT, () => {
+//     console.log(`Server running on http://localhost:${PORT}`);
+// });

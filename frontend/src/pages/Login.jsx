@@ -1,23 +1,66 @@
-
-
-
 import { useState } from 'react'
 import "../Login.css";
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
-    console.log({
-      username,
-      password
-    })
+    setLoading(true)
 
-    alert('Login submitted')
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: username,
+            password: password
+          })
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message || "Login failed")
+        return
+      }
+
+      console.log("Login successful:", data)
+
+      // Save user information
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      )
+
+      alert("Login successful!")
+
+      // You can redirect after login
+      // window.location.href = "/dashboard"
+      navigate("/dashboard") // Use this if you are using react-router-dom
+
+    } catch (error) {
+
+      console.error("Login error:", error)
+
+      alert(
+        "Unable to connect to server. Make sure backend is running."
+      )
+
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -81,7 +124,6 @@ function Login() {
 
         </div>
 
-
         {/* Right Section */}
         <div className="login-box">
 
@@ -99,20 +141,19 @@ function Login() {
 
           </div>
 
-
           <form onSubmit={handleSubmit}>
 
             <div className="input-group">
 
-              <label>Username</label>
+              <label>Email</label>
 
               <div className="input-wrapper">
 
                 <span>👤</span>
 
                 <input
-                  type="text"
-                  placeholder="Enter your username"
+                  type="email"
+                  placeholder="Enter your email"
                   value={username}
                   onChange={(event) =>
                     setUsername(event.target.value)
@@ -123,7 +164,6 @@ function Login() {
               </div>
 
             </div>
-
 
             <div className="input-group">
 
@@ -155,33 +195,30 @@ function Login() {
 
             </div>
 
-
             <button
               className="login-button"
               type="submit"
+              disabled={loading}
             >
-              Login
-              <span>→</span>
+              {loading ? "Logging in..." : "Login"}
+              {!loading && <span>→</span>}
             </button>
 
           </form>
-
 
           <div className="divider">
             <span>OR</span>
           </div>
 
-
           <p className="register-text">
 
             Don't have an account?
 
-            <a href="#">
+            <a href="/register">
               Create Account
             </a>
 
           </p>
-
 
           <p className="secure-text">
             🔒 Your information is securely protected
@@ -190,7 +227,6 @@ function Login() {
         </div>
 
       </div>
-
 
       <footer>
         © 2026 CivicFix • Smart India Hackathon

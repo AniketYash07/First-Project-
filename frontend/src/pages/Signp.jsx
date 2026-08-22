@@ -49,8 +49,8 @@ function Signp() {
       <div className="relative w-full max-w-md">
 
         {/* Logo / Brand */}
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
+        <div className="text-center flex flex-col items-center justify-center mb-8">
+          <div className=" mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
             <svg
               className="h-7 w-7 text-white"
               fill="none"
@@ -78,7 +78,7 @@ function Signp() {
         {/* Card */}
         <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-6 shadow-2xl backdrop-blur-xl sm:p-8">
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 flex flex-col gap-2">
 
             {/* Name */}
             <div>
@@ -171,12 +171,14 @@ function Signp() {
             </div>
 
             {/* Terms */}
-            <div className="flex items-start ">
-              <input
-                type="checkbox"
-                required
-                className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 ml-10"
-              />
+            <div className=" mb-4 flex items-center justify-center gap-2 mt-4">
+              <div>
+                <input
+                  type="checkbox"
+                  required
+                  className="mt-3 h-4 w-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 ml-10"
+                />
+              </div>
 
               <p className="text-sm text-slate-400">
                 I agree to the{" "}
@@ -191,12 +193,14 @@ function Signp() {
             </div>
 
             {/* Signup Button */}
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/20 transition duration-200 hover:scale-[1.01] hover:from-blue-600 hover:to-purple-700 active:scale-[0.99]"
-            >
-              Create Account
-            </button>
+            <div className="">
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/20 transition duration-200 hover:scale-[1.01] hover:from-blue-600 hover:to-purple-700 active:scale-[0.99]"
+              >
+                Create Account
+              </button>
+            </div>
           </form>
 
           {/* Divider */}
